@@ -1,4 +1,4 @@
-# kitty_help
+# Cat Rescue
 
 ## Project setup
 ```
