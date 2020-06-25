@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <div v-if="user">
+      <h3>Bienvenido {{user}}</h3>
+      <a href="#" @click="exitUser">Cerrar sesión</a>
+    </div>
+  
     <v-layout wrap>
       <!-- row -->
       <v-flex class="primary" xs6 md2 >
@@ -17,6 +22,13 @@
 
 <script>
 export default {
-  name: 'Home'
+  name: 'Home',
+  props: ['user'],
+  methods: {
+    exitUser() {
+      // Enviando evento 'exitUser' a App.vue para cerrar sesión
+      this.$emit('exitUser');
+    }
+  }
 }
 </script>

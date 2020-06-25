@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <v-toolbar color="indigo darken-4" app dark>
+        <v-app-bar app color="indigo darken-4" dark>
     
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
@@ -11,7 +11,7 @@
           <v-tab to="/">Home</v-tab>
           <v-tab to="/login">Ingresar</v-tab>
           <v-btn outlined color="white" to="/signup">Crear cuenta</v-btn>       
-        </v-toolbar>
+        </v-app-bar>
 
         <v-navigation-drawer app v-model="drawer" temporary color="light-blue"> 
           <v-layout mt-4 column align-center>

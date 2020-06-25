@@ -9,6 +9,8 @@ import firebase from 'firebase';
 // Importando el módulo de configuración de Firebase
 import {firebaseConfig} from './config/firebaseConfig';
 
+Vue.config.productionTip = false;
+
 Vue.use(Vuelidate);
 
 // Initialize Firebase
@@ -16,8 +18,6 @@ firebase.initializeApp(firebaseConfig);
 
 // Uso de base de datos
 export const db = firebase.firestore();
-
-Vue.config.productionTip = false;
 
 new Vue({
   router,

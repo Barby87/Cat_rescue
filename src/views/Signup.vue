@@ -21,7 +21,7 @@
         </form>
 
           <v-card-actions class="justify-center">
-            <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click.prevent="submit">CREAR CUENTA</v-btn>
+            <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="signUpUser">CREAR CUENTA</v-btn>
             <v-btn class="ma-2" tile color="red darken-4" x-large dark @click="clear">RESETEAR</v-btn>
           </v-card-actions>
       </v-card-text>
@@ -36,8 +36,9 @@
 </template>
 
 <script>
-  import { validationMixin } from 'vuelidate'
-  import { required, maxLength, email } from 'vuelidate/lib/validators'
+  import { validationMixin } from 'vuelidate';
+  import { required, maxLength, email } from 'vuelidate/lib/validators';
+  import firebase from 'firebase';
 
   export default {
     mixins: [validationMixin],
@@ -91,9 +92,9 @@
     },
 
     methods: {
-      submit () {
-        this.$v.$touch()
-      },
+      // submit () {
+      //   this.$v.$touch()
+      // },
       clear () {
         this.$v.$reset()
         this.name = ''
@@ -101,6 +102,38 @@
         this.select = null
         this.checkbox = false
       },
+      signUpUser() {
+        this.$v.$touch();
+        // Lo ideal es hacer las validaciones del formulario antes de hacer el llamado a la base de datos
+        if(this.name && this.email && this.password) {
+          firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+          .then(response => {
+            console.log(response);
+            console.log(response.user);
+            // Pasando otra promesa a la respuesta, para que actualice el usuario
+            return response.user.updateProfile({
+              displayName: this.name,
+            // Retorna promesa vacía, dentro de la cual indico que me redireccione a la raíz
+            }).then(() => {
+              this.name = '';
+              this.email = '';
+              this.password = '';
+              // Usar guards de router para redirigir forzosamente a otra ruta
+              this.$router.push('/');
+            })
+          }).catch(err => {
+              if(err.code == 'auth/weak-password') {
+                alert('La contraseña debe contener al menos 6 caracteres')
+              } else if(err.code == 'auth/email-already-in-use') {
+                alert('Este email ya está en uso, intente restablecer contraseña o registrarse con otro correo');
+              } else {
+                console.error(err);
+              }
+            })
+        } else {
+          alert("Ingrese un todos los datos por favor")
+        }
+      }
     },
   }
 </script>
