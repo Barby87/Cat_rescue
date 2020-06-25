@@ -7,10 +7,13 @@
           <v-toolbar-title>Cat Rescue</v-toolbar-title>
 
           <v-spacer></v-spacer>
-    
+
+          <p>Hola {{user}}</p>
+          <v-spacer></v-spacer>
           <v-tab to="/">Home</v-tab>
           <v-tab to="/login">Ingresar</v-tab>
-          <v-btn outlined color="white" to="/signup">Crear cuenta</v-btn>       
+          <v-btn outlined color="white" to="/signup">Crear cuenta</v-btn>
+          <v-btn outlined color="white" @click="logOut" >Salir</v-btn>
         </v-app-bar>
 
         <v-navigation-drawer app v-model="drawer" temporary color="light-blue"> 
@@ -29,14 +32,33 @@
 </template>
 
 <script>
-  export default {
-    name: 'Toolbar',
+import firebase from 'firebase';
 
-    data() {
-      return {
-        drawer: true
-      }
-     
+export default {
+
+  name: 'Toolbar',
+  // props: ['user'],
+  data() {
+    return {
+      drawer: true,
+      user: '',
+      emailUser: '',
+      uid: ''
     }
+  },
+  methods: {
+    // exitUser() {
+    //   // Enviando evento 'exitUser' a App.vue para cerrar sesión
+    //   this.$emit('exitUser');
+    // }
+     logOut() {
+      firebase.auth().signOut().then(()=> {
+        this.user = '';
+        this.emailUser = '';
+        this.uid = '';
+        this.$router.push('/login');
+      })
+    },
   }
+}
 </script>

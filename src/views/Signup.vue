@@ -15,9 +15,9 @@
         
           <v-text-field v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()" @blur="$v.password.$touch()" label="Contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
         
-          <v-text-field label="Confirmar contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
+          <v-text-field v-model="confirmPassword" :error-messages="confirmPasswordErrors" @input="$v.confirmPassword.$touch()" @blur="$v.confirmPassword.$touch()" label="Confirmar contraseña" :type="showPassword ? 'text' : 'confirmPassword'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
         
-          <v-checkbox v-model="userAgree" :error-messages="userAgreeErrors" label="Al registrarme, declaro que soy mayor de edad y acepto los Términos y condiciones y las Políticas de privacidad de Cat Rescue." required @change="$v.checkbox.$touch()" @blur="$v.checkbox.$touch()"></v-checkbox>
+          <v-checkbox v-model="userAgree" :error-messages="userAgreeErrors" label="Al registrarme, declaro que soy mayor de edad y acepto los Términos y condiciones y las Políticas de privacidad de Cat Rescue." required @change="$v.userAgree.$touch()" @blur="$v.userAgree.$touch()"></v-checkbox>
         </form>
 
           <v-card-actions class="justify-center">
@@ -47,6 +47,7 @@
       name: { required, maxLength: maxLength(20) },
       email: { required, email },
       password: { required },
+      confirmPassword: { required },
        userAgree: {
         checked (val) {
           return val
@@ -59,6 +60,7 @@
       email: '',
       password: '',
       showPassword: '',
+      confirmPassword: '',
       userAgree: false
     }),
 
@@ -83,6 +85,12 @@
         !this.$v.password.required && errors.push('La contraseña es obligatoria')
         return errors;
       },
+      confirmPasswordErrors () {
+        const errors = []
+        if (!this.$v.confirmPassword.$dirty) return errors;
+        !this.$v.confirmPassword.required && errors.push('Por favor, confirme contraseña')
+        return errors;
+      },
       userAgreeErrors () {
         const errors = []
         if (!this.$v.userAgree.$dirty) return errors;
@@ -100,12 +108,12 @@
         this.name = ''
         this.email = ''
         this.select = null
-        this.checkbox = false
+        this.userAgree = false
       },
       signUpUser() {
         this.$v.$touch();
         // Lo ideal es hacer las validaciones del formulario antes de hacer el llamado a la base de datos
-        if(this.name && this.email && this.password) {
+        if(this.name && this.email && this.password && this.confirmPassword && this.userAgree) {
           firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
           .then(response => {
             console.log(response);
@@ -130,8 +138,10 @@
                 console.error(err);
               }
             })
+        } else if(this.password === this.confirmPassword){
+          alert("Las contraseñas deben ser iguales")
         } else {
-          alert("Ingrese un todos los datos por favor")
+          alert("Antes de continuar debe completar todos los datos")
         }
       }
     },
