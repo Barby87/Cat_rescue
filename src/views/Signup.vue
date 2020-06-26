@@ -1,7 +1,7 @@
 <template>
-  <v-flex>
-    <v-card class="mx-auto mt-5" width="500"> 
-      <v-toolbar dark color="indigo">
+  <v-flex class="background py-10">
+    <v-card class="mx-auto pb-3" color="rgb(255, 255, 255, 0.85)" width="500"> 
+      <v-toolbar dark color="indigo" class="pl-4"> 
         <v-toolbar-title>Completa tus datos</v-toolbar-title>
       </v-toolbar>
       <!-- <v-progress-linear v-if="apiRequest" :active="loading" :indeterminate="loading" absolute bottom color="deep-purple accent-4"
@@ -20,18 +20,16 @@
           <v-checkbox v-model="userAgree" :error-messages="userAgreeErrors" label="Al registrarme, declaro que soy mayor de edad y acepto los Términos y condiciones y las Políticas de privacidad de Cat Rescue." required @change="$v.userAgree.$touch()" @blur="$v.userAgree.$touch()"></v-checkbox>
         </form>
 
-          <v-card-actions class="justify-center">
-            <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="signUpUser">CREAR CUENTA</v-btn>
-            <v-btn class="ma-2" tile color="red darken-4" x-large dark @click="clear">RESETEAR</v-btn>
-          </v-card-actions>
+        <v-card-actions class="justify-center">
+          <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="signUpUser">CREAR CUENTA</v-btn>
+          <v-btn class="ma-2" tile color="red darken-4" x-large dark @click="clear">RESETEAR</v-btn>
+        </v-card-actions>
       </v-card-text>
-      
+      <p align="center" class="text-lg-h6">
+        ¿Ya tienes una cuenta?
+        <a href="/login">Inicia sesión aquí</a>
+      </p> 
     </v-card>
-    <br>
-    <p align="center">
-      ¿Ya tienes una cuenta?
-      <a href="/login">Inicia sesión aquí</a>
-    </p>
   </v-flex>
 </template>
 
@@ -147,3 +145,16 @@
     },
   }
 </script>
+
+<style scoped>
+
+.background{
+  background-image: url(../assets/gato-abrazo.jpg);
+    margin: 0 auto;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+</style>

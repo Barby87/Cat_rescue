@@ -8,7 +8,7 @@
 
           <v-spacer></v-spacer>
 
-          <p>Hola {{user}}</p>
+          <!-- <p>Hola {{user}}</p> -->
           <v-spacer></v-spacer>
           <v-tab to="/">Home</v-tab>
           <v-tab to="/login">Ingresar</v-tab>

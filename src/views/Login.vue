@@ -1,33 +1,37 @@
 <template>
   <div>
-    <v-flex>
-      <v-card width="400" class="mx-auto mt-5">
-        <v-toolbar dark color="indigo">
+    <v-flex class="background py-16">
+      <v-card width="500" color="rgb(255, 255, 255, 0.80)" class="mx-auto mt-5 pb-3">
+        <v-toolbar dark color="indigo" class="pl-4">
           <v-toolbar-title>Ingresa tu usuario y clave</v-toolbar-title>
         </v-toolbar>
 
         <v-card-text>
-          <v-form>
+          <v-form class="pt-3">
             <v-text-field v-model="email" label="E-mail" prepend-icon="mdi-account-circle"/>
             <v-text-field v-model="password" label="Contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
           </v-form>
+
+          <v-card-actions class="justify-center">
+            <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="loginUser">Iniciar sesión</v-btn>
+          </v-card-actions>
+
+          <v-card-actions class="justify-center">
+            <!-- <a @click="restablecer" href="#">Olvidé mi contraseña</a> -->
+            <v-btn text color="primary" @click="restore">Olvidé mi contraseña</v-btn>
+          </v-card-actions>
         </v-card-text>
 
-        <v-card-actions class="justify-center">
-          <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="loginUser">Iniciar sesión</v-btn>
-        </v-card-actions>
+        <p align="center" class="text-lg-h6">
+          ¿Aún no tienes una cuenta?
+          <a href="/login">Regístrate aquí</a>
+        </p>
 
-        <v-card-actions class="justify-center">
-          <!-- <a @click="restablecer" href="#">Olvidé mi contraseña</a> -->
-          <v-btn text color="primary" @click="restore">Olvidé mi contraseña</v-btn>
-        </v-card-actions>
+        
       </v-card>
     </v-flex>
-    <br>
-    <p align="center">
-      ¿Aún no tienes una cuenta?
-      <a href="/login">Regístrate aquí</a>
-    </p>
+
+    
   </div>
 </template>
 
@@ -97,6 +101,13 @@ export default {
 }
 </script> 
 <style scoped>
-
+.background{
+  background-image: url(../assets/gato1.jpg);
+  /* margin: 0 auto; */
+  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
   
 </style>
