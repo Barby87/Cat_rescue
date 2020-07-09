@@ -15,13 +15,14 @@
         
           <v-text-field v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()" @blur="$v.password.$touch()" label="Contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
         
-          <v-text-field v-model="confirmPassword" :error-messages="confirmPasswordErrors" @input="$v.confirmPassword.$touch()" @blur="$v.confirmPassword.$touch()" label="Confirmar contraseña" :type="showPassword ? 'text' : 'confirmPassword'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
+          <v-text-field v-model="confirmPassword" :error-messages="confirmPasswordErrors" @input="$v.confirmPassword.$touch()" @blur="$v.confirmPassword.$touch()" label="Confirmar contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
         
           <v-checkbox v-model="userAgree" :error-messages="userAgreeErrors" label="Al registrarme, declaro que soy mayor de edad y acepto los Términos y condiciones y las Políticas de privacidad de Cat Rescue." required @change="$v.userAgree.$touch()" @blur="$v.userAgree.$touch()"></v-checkbox>
         </form>
 
         <v-card-actions class="justify-center">
           <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="signUpUser">CREAR CUENTA</v-btn>
+
           <v-btn class="ma-2" tile color="red darken-4" x-large dark @click="clear">RESETEAR</v-btn>
         </v-card-actions>
       </v-card-text>
@@ -37,6 +38,7 @@
   import { validationMixin } from 'vuelidate';
   import { required, maxLength, email } from 'vuelidate/lib/validators';
   import firebase from 'firebase';
+  import Swal from 'sweetalert2';
 
   export default {
     mixins: [validationMixin],
@@ -46,7 +48,7 @@
       email: { required, email },
       password: { required },
       confirmPassword: { required },
-       userAgree: {
+      userAgree: {
         checked (val) {
           return val
         },
@@ -98,51 +100,103 @@
     },
 
     methods: {
-      // submit () {
-      //   this.$v.$touch()
-      // },
       clear () {
         this.$v.$reset()
         this.name = ''
         this.email = ''
-        this.select = null
         this.userAgree = false
       },
       signUpUser() {
         this.$v.$touch();
-        // Lo ideal es hacer las validaciones del formulario antes de hacer el llamado a la base de datos
-        if(this.name && this.email && this.password && this.confirmPassword && this.userAgree) {
-          firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        if(!this.name || !this.email || !this.password) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: 'Debe ingresar todos los datos para continuar',
+              footer: '<b>Cat Rescue</b>'
+          });
+        } else if(!this.confirmPassword) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: 'Debe confirmar contraseña',
+              footer: '<b>Cat Rescue</b>'
+          });
+        } else if(!this.password || !this.confirmPassword){
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: 'Debe escribir dos veces la contraseña',
+              footer: '<b>Cat Rescue</b>'
+          });
+        } else if(this.password != this.confirmPassword) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: 'Las contraseñas no coinciden',
+              footer: '<b>Cat Rescue</b>'
+          }); 
+        } else if (!this.userAgree){
+          Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: 'Debe aceptar términos y condiciones',
+              footer: '<b>Cat Rescue</b>'
+          }); 
+        } else {
+          firebase.auth().createUserWithEmailAndPassword(this.email, this.confirmPassword)
           .then(response => {
             console.log(response);
             console.log(response.user);
             // Pasando otra promesa a la respuesta, para que actualice el usuario
             return response.user.updateProfile({
+              //Nombre de usuario que queda guardado en firebase (displayName) se actualiza con el nombre que ingresó el usuario
               displayName: this.name,
-            // Retorna promesa vacía, dentro de la cual indico que me redireccione a la raíz
+            // Retorna promesa vacía (función anónima), dentro de la cual indico que me redireccione a la raíz
             }).then(() => {
+              // Limpio los datos
               this.name = '';
               this.email = '';
               this.password = '';
-              // Usar guards de router para redirigir forzosamente a otra ruta
+              this.confirmPassword = '';
+              
+              // Se crea objeto con la información del usuario que se va a enviar a la action, los nombres de las propiedades quedarán guardadas en el store (objeto user)
+              let dataUser = {
+                displayName: response.user.displayname,
+                email: response.user.email, 
+                emailVerified: response.user.emailVerified,
+                uid: response.user.uid 
+              };
+               
+              // Activando action userSignUp y enviando datos de registro de usuario
+              this.$store.dispatch('signUpUser', dataUser);
+
+              // *Usar guards de router para redirigir forzosamente a otra ruta
               this.$router.push('/');
             })
           }).catch(err => {
               if(err.code == 'auth/weak-password') {
-                alert('La contraseña debe contener al menos 6 caracteres')
+                 Swal.fire({
+                  icon: 'error',
+                  title: 'Oops!',
+                  text: 'La contraseña debe contener como mínimo 6 dígitos alfanuméricos',
+                  footer: '<b>Cat Rescue</b>'
+                });
+                // alert('La contraseña debe contener al menos 6 caracteres')
               } else if(err.code == 'auth/email-already-in-use') {
-                alert('Este email ya está en uso, intente restablecer contraseña o registrarse con otro correo');
+                 Swal.fire({
+                  icon: 'error',
+                  title: 'Oops!',
+                  text: 'Este email ya está en uso, intente restablecer contraseña o registrarse con otro correo',
+                  footer: '<b>Cat Rescue</b>'
+                });
               } else {
                 console.error(err);
               }
             })
-        } else if(this.password === this.confirmPassword){
-          alert("Las contraseñas deben ser iguales")
-        } else {
-          alert("Antes de continuar debe completar todos los datos")
         }
       }
-    },
+    }
   }
 </script>
 

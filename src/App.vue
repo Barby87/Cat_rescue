@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <v-app>
-      <Toolbar :user="user"></Toolbar>
-       <!--  @exitUser="logOut" -->
+      <Toolbar :userInfo="userInfo"></Toolbar>
+       <!--@exitUser="logOut"-->
 
       <v-main>
         <!-- Pasando la variable 'user' como props a Home -->
@@ -28,42 +28,43 @@ export default {
   },
   data() {
     return {
-      user: '',
-      emailUser: '',
-      uid: ''
+      userInfo: {},
     }
   },
   methods: {
-    // Método 
-    // logOut() {
-    //   firebase.auth().signOut().then(()=> {
-    //     // this.$router.push('/login');
-    //     this.user = '';
-    //     this.emailUser = '';
-    //     this.uid = '';
-    //     this.$router.push('/login');
-    //   })
-    // },
     // Método para detectar si hay algún cambio en el estado del usuario que está autentificado, una vez que haya sido montado el componente
-    beforeUpdate() {
-      firebase.auth().onAuthStateChanged(dato => {
-        if(dato) {
-          console.log(dato.data);
-          this.user = dato.displayName;
-          this.email = dato.email;
-          this.uid = dato.uid;
+    mounted() {
+      firebase.auth().onAuthStateChanged(user => {
+        if(user) {
+          console.log(user.data);
+          this.user = user.displayName;
+          this.email = user.email;
+          this.uid = user.uid;
 
-          console.log(dato.emailVerified);
-          if(!dato.emailVerified) {
-              dato.sendEmailVerification().then(function() {
+          this.userInfo = {
+            displayName: user.displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            uid: user.uid
+          };
+
+          console.log(user.emailVerified);
+          // Recuperar contraseña
+          if(!user.emailVerified) {
+              user.sendEmailVerification().then(function() {
               console.log('Correo enviado');
-              console.log(dato.emailVerified);
+              console.log(user.emailVerified);
             }).catch(function(error) {
               console.log(error);
             });
           }
         } else {
-          this.user = '';
+          this.userInfo = {
+            displayName: '',
+            email: '',
+            emailVerified: '',
+            uid: ''
+          };
         }
       })
     }

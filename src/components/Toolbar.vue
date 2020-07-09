@@ -13,7 +13,7 @@
           <v-tab to="/">Home</v-tab>
           <v-tab to="/login">Ingresar</v-tab>
           <v-btn outlined color="white" to="/signup">Crear cuenta</v-btn>
-          <v-btn outlined color="white" @click="logOut" >Salir</v-btn>
+          <v-btn outlined color="white" @click="logOutUser">Salir</v-btn>
         </v-app-bar>
 
         <v-navigation-drawer app v-model="drawer" temporary color="light-blue"> 
@@ -41,24 +41,28 @@ export default {
   data() {
     return {
       drawer: true,
-      user: '',
-      emailUser: '',
-      uid: ''
+      // user: '',
+      // emailUser: '',
+      // uid: ''
     }
   },
+
   methods: {
-    // exitUser() {
-    //   // Enviando evento 'exitUser' a App.vue para cerrar sesión
-    //   this.$emit('exitUser');
-    // }
-     logOut() {
+    logOutUser() {
       firebase.auth().signOut().then(()=> {
-        this.user = '';
-        this.emailUser = '';
-        this.uid = '';
+        // Limpiando datos del usuario del estadouser = '';
+        let dataUser = {
+          displayName: '',
+          email: '',
+          emailVerified: '',
+          uid: ''
+        };
+
+        this.$store.dispatch('signUpUser', dataUser);
         this.$router.push('/login');
+        console.log('saliendo...');
       })
-    },
+    }
   }
 }
 </script>

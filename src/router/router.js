@@ -7,17 +7,24 @@ Vue.use(VueRouter);
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/Home.vue'),
+    alias: ['/inicio', '/home']
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/Login.vue')
+    component: () => import('../views/Login.vue'),
+    alias: ['/iniciar-sesion', '/iniciar', '/login']
   },
   {
     path: '/signup',
     name: 'Signup',
-    component: () => import('../views/Signup.vue')
+    component: () => import('../views/Signup.vue'),
+    alias: ['/registro', '/registrar', '/crear-usuario', '/nuevo-usuario']
+  },
+  {
+    path: '*',
+    redirect: '/login'
   }
 ];
 

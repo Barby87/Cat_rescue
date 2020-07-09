@@ -1,9 +1,10 @@
 <template>
   <v-container>
-    <!-- <div v-if="user"> -->
-      <!-- <h3>Hola {{user}}</h3> -->
-      <!-- <a href="#" @click="exitUser">Cerrar sesión</a> -->
-    <!-- </div> -->
+    <h1 class="d-inline-block">Bienvenido </h1>
+
+    <v-alert dense text type="success" v-if="userName.uid">Conexión exitosa</v-alert>
+
+    <v-alert dense outlined type="error" v-else>No hay usuario conectado</v-alert>
     
   </v-container>
 </template>
@@ -11,12 +12,10 @@
 <script>
 export default {
   name: 'Home',
-  props: ['user'],
-  methods: {
-    exitUser() {
-      // Enviando evento 'exitUser' a App.vue para cerrar sesión
-      this.$emit('exitUser');
+  computed: {
+    userName() {
+      return this.$store.getters.sendingUser;
     }
-  }
+  },
 }
 </script>

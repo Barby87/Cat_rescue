@@ -29,6 +29,7 @@
     "firebase": "^7.15.4",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
+    "sweetalert2": "^9.15.2",
     "vue-cli-plugin-vuetify": "~2.0.6",
     "vue-template-compiler": "^2.6.11",
     "vuelidate": "^0.7.5",
