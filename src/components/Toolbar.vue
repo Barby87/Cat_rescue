@@ -2,7 +2,7 @@
     <v-layout>
         <v-app-bar app color="indigo darken-4" dark>
     
-          <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon @click="drawer=!drawer" v-if="userName.uid"></v-app-bar-nav-icon>
 
           <v-toolbar-title>Cat Rescue</v-toolbar-title>
 
@@ -16,15 +16,19 @@
           <v-btn outlined color="white" @click="logOutUser">Salir</v-btn>
         </v-app-bar>
 
-        <v-navigation-drawer app v-model="drawer" temporary color="light-blue"> 
+        <v-navigation-drawer app v-model="drawer" temporary color="light-blue" v-if="userName.uid"> 
           <v-layout mt-4 column align-center>
             <v-flex>
-              <v-avatar>
-                <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="Imagen de perfil">
+              <v-avatar v-if="userName.photoURL">
+                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+              </v-avatar>
+
+              <v-avatar color="indigo" v-else>
+                <v-icon dark>mdi-account-circle</v-icon>
               </v-avatar>
             </v-flex>
             <v-flex>
-              <p class="white--text headline">Nombre Usuario</p>
+              <p class="white--text headline">{{userName.displayName}}</p>
             </v-flex>
           </v-layout>
         </v-navigation-drawer>
@@ -35,15 +39,17 @@
 import firebase from 'firebase';
 
 export default {
-
   name: 'Toolbar',
   // props: ['user'],
   data() {
     return {
-      drawer: true,
-      // user: '',
-      // emailUser: '',
-      // uid: ''
+      drawer: true
+    }
+  },
+
+  computed: {
+    userName() {
+      return this.$store.getters.sendingUser;
     }
   },
 

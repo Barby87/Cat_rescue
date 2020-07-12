@@ -7,11 +7,15 @@
         </v-toolbar>
 
         <v-card-text>
+          <!-- E-mail -->
           <v-form class="pt-3">
-            <v-text-field v-model="email" label="E-mail" prepend-icon="mdi-account-circle"/>
-            <v-text-field v-model="password" label="Contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
+            <v-text-field v-model="email" label="E-mail" prepend-icon="mdi-account-circle" color="teal darken-1"/>
+
+          <!-- Contraseña -->
+            <v-text-field v-model="password" label="Contraseña" color="teal darken-1" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
           </v-form>
 
+          <!-- Botones -->
           <v-card-actions class="justify-center">
             <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="loginUser">Iniciar sesión</v-btn>
           </v-card-actions>
@@ -56,6 +60,7 @@ export default {
         // Se crea un objeto con los datos del usuario que retorna la promesa
         let dataUser = {
           displayName: response.user.displayName,
+          photoURL: response.user.photoURL,
           email: response.user.email,
           emailVerified: response.user.emailVerified,
           uid: response.user.uid

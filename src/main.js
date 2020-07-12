@@ -11,12 +11,11 @@ import {firebaseConfig} from './config/firebaseConfig';
 
 Vue.use(Vuelidate);
 
-// Initialize Firebase
+// Initialización de Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Uso de base de datos
+// Inicialización de base de datos
 export const db = firebase.firestore();
-
 
 Vue.config.productionTip = false;
 

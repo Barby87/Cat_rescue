@@ -2,11 +2,8 @@
   <div id="app">
     <v-app>
       <Toolbar :userInfo="userInfo"></Toolbar>
-       <!--@exitUser="logOut"-->
 
       <v-main>
-        <!-- Pasando la variable 'user' como props a Home -->
-        <!-- Recibiendo evento exitUser -->
         <router-view/>
       </v-main>
 

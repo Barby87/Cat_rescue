@@ -7,22 +7,42 @@
       <!-- <v-progress-linear v-if="apiRequest" :active="loading" :indeterminate="loading" absolute bottom color="deep-purple accent-4"
       ></v-progress-linear> -->
       <v-card-text>
-        <form>
-          <v-text-field v-model="name" :error-messages="nameErrors" :counter="20" label="Nombre" prepend-icon="mdi-account" required @input="$v.name.$touch()" @blur="$v.name.$touch()">
-          </v-text-field>
-        
-          <v-text-field v-model="email" :error-messages="emailErrors" label="E-mail" prepend-icon="mdi-email" required @input="$v.email.$touch()" @blur="$v.email.$touch()"></v-text-field>
-        
-          <v-text-field v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()" @blur="$v.password.$touch()" label="Contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
-        
-          <v-text-field v-model="confirmPassword" :error-messages="confirmPasswordErrors" @input="$v.confirmPassword.$touch()" @blur="$v.confirmPassword.$touch()" label="Confirmar contraseña" :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
-        
-          <v-checkbox v-model="userAgree" :error-messages="userAgreeErrors" label="Al registrarme, declaro que soy mayor de edad y acepto los Términos y condiciones y las Políticas de privacidad de Cat Rescue." required @change="$v.userAgree.$touch()" @blur="$v.userAgree.$touch()"></v-checkbox>
-        </form>
+        <!-- Formulario de registro -->
+        <v-form>
+          <!-- Nombre -->
+          <v-row>
+            <v-col cols="12" sm="6">
+              <!-- Nombre -->
+              <v-text-field v-model="name" :error-messages="nameErrors" label="Nombre" prepend-icon="mdi-account" color="teal darken-1" required @input="$v.name.$touch()" @blur="$v.name.$touch()">
+              </v-text-field>
+            </v-col>
 
+            <!-- Apellido -->
+            <v-col cols="12" sm="6">
+              <v-text-field v-model="lastName" :error-messages="lastNameErrors" label="Apellido" color="teal darken-1" required @input="$v.lastName.$touch()" @blur="$v.lastName.$touch()">
+              </v-text-field>
+            </v-col>
+          </v-row>
+      
+          <!-- Foto de perfil -->
+          <v-file-input label="Avatar" prepend-icon="mdi-camera" color="teal darken-1"></v-file-input>
+
+          <!--Correo -->
+          <v-text-field v-model="email" :error-messages="emailErrors" label="E-mail" prepend-icon="mdi-email" color="teal darken-1" required @input="$v.email.$touch()" @blur="$v.email.$touch()"></v-text-field>
+
+          <!-- Contraseña -->
+          <v-text-field v-model="password" :error-messages="passwordErrors" label="Contraseña" color="teal darken-1" @input="$v.password.$touch()" @blur="$v.password.$touch()"  :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
+
+          <!-- Confirmar contraseña -->
+          <v-text-field v-model="confirmPassword" label="Confirmar contraseña" color="teal darken-1" :error-messages="confirmPasswordErrors" @input="$v.confirmPassword.$touch()" @blur="$v.confirmPassword.$touch()"  :type="showPassword ? 'text' : 'password'" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" @click:append="showPassword = !showPassword"/>
+
+          <!-- Aceptar términos y condiciones -->
+          <v-checkbox v-model="userAgree" :error-messages="userAgreeErrors" label="Al registrarme, declaro que soy mayor de edad y acepto los Términos y condiciones y las Políticas de privacidad de Cat Rescue." color="teal darken-1" required @change="$v.userAgree.$touch()" @blur="$v.userAgree.$touch()"></v-checkbox>
+        </v-form>
+
+        <!-- Botones -->
         <v-card-actions class="justify-center">
           <v-btn class="ma-2" tile color="blue darken-2" x-large dark @click="signUpUser">CREAR CUENTA</v-btn>
-
           <v-btn class="ma-2" tile color="red darken-4" x-large dark @click="clear">RESETEAR</v-btn>
         </v-card-actions>
       </v-card-text>
@@ -36,7 +56,7 @@
 
 <script>
   import { validationMixin } from 'vuelidate';
-  import { required, maxLength, email } from 'vuelidate/lib/validators';
+  import { required, email } from 'vuelidate/lib/validators';
   import firebase from 'firebase';
   import Swal from 'sweetalert2';
 
@@ -44,7 +64,8 @@
     mixins: [validationMixin],
 
     validations: {
-      name: { required, maxLength: maxLength(20) },
+      name: { required },
+      lastName: { required },
       email: { required, email },
       password: { required },
       confirmPassword: { required },
@@ -57,6 +78,8 @@
 
     data: () => ({
       name: '',
+      lastName: '',
+      image: '',
       email: '',
       password: '',
       showPassword: '',
@@ -68,10 +91,17 @@
       nameErrors () {
         const errors = []
         if (!this.$v.name.$dirty) return errors;
-        !this.$v.name.maxLength && errors.push('El nombre debe tener como máximo 20 caracteres')
         !this.$v.name.required && errors.push('El nombre es obligatorio')
         return errors;
       },
+
+      lastNameErrors () {
+        const errors = []
+        if (!this.$v.lastName.$dirty) return errors;
+        !this.$v.lastName.required && errors.push('El nombre es obligatorio')
+        return errors;
+      },
+
       emailErrors () {
         const errors = []
         if (!this.$v.email.$dirty) return errors;
@@ -79,18 +109,21 @@
         !this.$v.email.required && errors.push('El correo es obligatorio')
         return errors;
       },
+
       passwordErrors () {
         const errors = []
         if (!this.$v.password.$dirty) return errors;
         !this.$v.password.required && errors.push('La contraseña es obligatoria')
         return errors;
       },
+
       confirmPasswordErrors () {
         const errors = []
         if (!this.$v.confirmPassword.$dirty) return errors;
         !this.$v.confirmPassword.required && errors.push('Por favor, confirme contraseña')
         return errors;
       },
+
       userAgreeErrors () {
         const errors = []
         if (!this.$v.userAgree.$dirty) return errors;
@@ -102,10 +135,12 @@
     methods: {
       clear () {
         this.$v.$reset()
-        this.name = ''
-        this.email = ''
-        this.userAgree = false
+        this.name = '';
+        this.image = '';
+        this.email = '';
+        this.userAgree = false;
       },
+
       signUpUser() {
         this.$v.$touch();
         if(!this.name || !this.email || !this.password) {
@@ -151,11 +186,15 @@
             // Pasando otra promesa a la respuesta, para que actualice el usuario
             return response.user.updateProfile({
               //Nombre de usuario que queda guardado en firebase (displayName) se actualiza con el nombre que ingresó el usuario
-              displayName: this.name,
+              displayName: `${this.name} ${this.lastName}`,
+              // Actualizando foto del usuario
+              photoURL: this.image
             // Retorna promesa vacía (función anónima), dentro de la cual indico que me redireccione a la raíz
             }).then(() => {
               // Limpio los datos
               this.name = '';
+              this.lastName = '';
+              this.image = '';
               this.email = '';
               this.password = '';
               this.confirmPassword = '';
@@ -163,6 +202,7 @@
               // Se crea objeto con la información del usuario que se va a enviar a la action, los nombres de las propiedades quedarán guardadas en el store (objeto user)
               let dataUser = {
                 displayName: response.user.displayname,
+                photoURL: response.user.photoURL,
                 email: response.user.email, 
                 emailVerified: response.user.emailVerified,
                 uid: response.user.uid 
@@ -179,7 +219,7 @@
                  Swal.fire({
                   icon: 'error',
                   title: 'Oops!',
-                  text: 'La contraseña debe contener como mínimo 6 dígitos alfanuméricos',
+                  text: 'La contraseña debe contener como mínimo 6 dígitos',
                   footer: '<b>Cat Rescue</b>'
                 });
                 // alert('La contraseña debe contener al menos 6 caracteres')
